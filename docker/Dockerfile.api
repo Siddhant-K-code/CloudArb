@@ -26,6 +26,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy source code
 COPY src/ ./src/
 COPY setup.py .
+COPY README.md .
 
 # Install the package in development mode
 RUN pip install -e .
