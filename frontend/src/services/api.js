@@ -124,6 +124,9 @@ export const optimizationAPI = {
   deployOptimization: (id) =>
     api.post(`/optimize/${id}/deploy`),
 
+  runOptimization: (id) =>
+    api.post(`/optimize/${id}/run`),
+
   quickOptimize: (optimizationData) =>
     api.post('/optimize/quick', optimizationData),
 };
@@ -179,6 +182,57 @@ export const marketDataAPI = {
 
   getMarketStats: () =>
     api.get('/market/stats'),
+
+  getMarketTrends: (params = {}) =>
+    api.get('/market/trends', { params }),
+
+  getAvailabilityData: (params = {}) =>
+    api.get('/market/availability', { params }),
+};
+
+// User API
+export const userAPI = {
+  getProfile: () =>
+    api.get('/users/profile'),
+
+  updateProfile: (profileData) =>
+    api.put('/users/profile', profileData),
+
+  getActivity: (params = {}) =>
+    api.get('/users/activity', { params }),
+
+  changePassword: (passwordData) =>
+    api.put('/users/password', passwordData),
+
+  getPreferences: () =>
+    api.get('/users/preferences'),
+
+  updatePreferences: (preferences) =>
+    api.put('/users/preferences', preferences),
+};
+
+// Settings API
+export const settingsAPI = {
+  getSettings: () =>
+    api.get('/settings'),
+
+  updateSettings: (settingsData) =>
+    api.put('/settings', settingsData),
+
+  updatePassword: (passwordData) =>
+    api.put('/settings/password', passwordData),
+
+  updateNotificationSettings: (notificationSettings) =>
+    api.put('/settings/notifications', notificationSettings),
+
+  updateApplicationSettings: (applicationSettings) =>
+    api.put('/settings/application', applicationSettings),
+
+  exportSettings: () =>
+    api.get('/settings/export'),
+
+  importSettings: (settingsFile) =>
+    api.post('/settings/import', settingsFile),
 };
 
 // Health Check API

@@ -97,6 +97,7 @@ poetry.lock
 # PDM
 pdm.lock
 __pypackages__/
+node_modules/
 
 # mypy
 .mypy_cache/
