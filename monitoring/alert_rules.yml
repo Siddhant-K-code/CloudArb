@@ -1,0 +1,148 @@
+groups:
+  - name: cloudarb_alerts
+    rules:
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 80% for more than 5 minutes"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 85% for more than 5 minutes"
+
+      # High disk usage
+      - alert: HighDiskUsage
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High disk usage on {{ $labels.instance }}"
+          description: "Disk usage is above 85% for more than 5 minutes"
+
+      # API high response time
+      - alert: APIHighResponseTime
+        expr: histogram_quantile(0.95, rate(cloudarb_http_request_duration_seconds_bucket[5m])) > 2
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API response time"
+          description: "95th percentile of API response time is above 2 seconds"
+
+      # API error rate
+      - alert: APIHighErrorRate
+        expr: rate(cloudarb_http_requests_total{status=~"5.."}[5m]) / rate(cloudarb_http_requests_total[5m]) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High API error rate"
+          description: "Error rate is above 5% for more than 2 minutes"
+
+      # Database connection issues
+      - alert: DatabaseConnectionIssues
+        expr: cloudarb_database_connections < 1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database connection issues"
+          description: "No active database connections"
+
+      # Redis connection issues
+      - alert: RedisConnectionIssues
+        expr: cloudarb_redis_connections < 1
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis connection issues"
+          description: "No active Redis connections"
+
+      # Optimization failures
+      - alert: OptimizationFailures
+        expr: rate(cloudarb_optimizations_total{status="failed"}[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Optimization failures detected"
+          description: "Optimization jobs are failing"
+
+      # Data ingestion issues
+      - alert: DataIngestionIssues
+        expr: rate(cloudarb_pricing_updates_total[5m]) == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Data ingestion issues"
+          description: "No pricing data updates in the last 10 minutes"
+
+      # Service down alerts
+      - alert: APIServiceDown
+        expr: up{job="cloudarb-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "CloudArb API is down"
+          description: "The CloudArb API service is not responding"
+
+      - alert: FrontendServiceDown
+        expr: up{job="cloudarb-frontend"} == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CloudArb Frontend is down"
+          description: "The CloudArb frontend service is not responding"
+
+      - alert: DatabaseServiceDown
+        expr: up{job="postgres"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "The PostgreSQL database service is not responding"
+
+      - alert: RedisServiceDown
+        expr: up{job="redis"} == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis is down"
+          description: "The Redis service is not responding"
+
+      # Cost optimization alerts
+      - alert: LowCostSavings
+        expr: cloudarb_average_savings_percent < 10
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low cost savings detected"
+          description: "Average cost savings is below 10%"
+
+      - alert: HighCostSpike
+        expr: rate(cloudarb_cost_savings_total[5m]) < 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Cost spike detected"
+          description: "Costs are increasing instead of decreasing"
