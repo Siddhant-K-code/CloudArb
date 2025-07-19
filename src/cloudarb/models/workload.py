@@ -70,7 +70,7 @@ class Workload(Base):
 
     # Metadata
     tags = Column(JSONB, nullable=True)
-    metadata = Column(JSONB, nullable=True)
+    meta_data = Column(JSONB, nullable=True)
 
     # Timestamps
     scheduled_at = Column(DateTime(timezone=True), nullable=True)

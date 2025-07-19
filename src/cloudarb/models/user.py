@@ -53,13 +53,11 @@ class User(Base):
     __tablename__ = "users"
 
     email = Column(String(255), unique=True, nullable=False, index=True)
-    username = Column(String(100), unique=True, nullable=False, index=True)
     hashed_password = Column(String(255), nullable=False)
     first_name = Column(String(100), nullable=True)
     last_name = Column(String(100), nullable=True)
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
-    last_login = Column(String(255), nullable=True)
 
     # Foreign keys
     organization_id = Column(Integer, ForeignKey("organizations.id"), nullable=False)
@@ -77,7 +75,7 @@ class User(Base):
         """Get user's full name."""
         if self.first_name and self.last_name:
             return f"{self.first_name} {self.last_name}"
-        return self.username
+        return self.email
 
     def has_permission(self, permission_name: str) -> bool:
         """Check if user has specific permission."""
@@ -99,7 +97,6 @@ class Role(Base):
 
     name = Column(String(100), unique=True, nullable=False, index=True)
     description = Column(Text, nullable=True)
-    is_system = Column(Boolean, default=False)  # System roles cannot be deleted
 
     # Relationships
     users = relationship("User", secondary=user_roles, back_populates="roles")

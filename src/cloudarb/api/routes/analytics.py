@@ -6,15 +6,15 @@ from pydantic import BaseModel
 from datetime import datetime, timedelta
 import json
 
-from ..database import get_db
-from ..models.user import User
-from ..models.workload import Workload
-from ..models.pricing import PricingData, Provider, InstanceType
-from ..models.optimization import OptimizationRun, Allocation
-from ..models.analytics import ArbitrageOpportunity
-from ..api.routes.auth import get_current_active_user
-from ..optimization.cost_calculator import CostCalculator
-from ..optimization.performance_analyzer import PerformanceAnalyzer
+from ...database import get_db
+from ...models.user import User
+from ...models.workload import Workload
+from ...models.pricing import PricingData, Provider, InstanceType
+from ...models.optimization import OptimizationRun, Allocation
+from ...models.analytics import ArbitrageOpportunity
+from .auth import get_current_active_user
+from ...optimization.cost_calculator import CostCalculator
+from ...optimization.performance_analyzer import PerformanceAnalyzer
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 

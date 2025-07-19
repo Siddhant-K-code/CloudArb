@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000',
+  baseURL: process.env.REACT_APP_API_URL || '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -246,7 +246,7 @@ export const healthAPI = {
 
 // WebSocket connection for real-time updates
 export const createWebSocketConnection = (token) => {
-  const wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost:8000/ws';
+  const wsUrl = process.env.REACT_APP_WS_URL || 'ws://localhost/ws';
   const ws = new WebSocket(`${wsUrl}?token=${token}`);
 
   ws.onopen = () => {

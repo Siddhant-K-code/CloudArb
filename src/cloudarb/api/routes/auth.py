@@ -7,9 +7,9 @@ from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
 
-from ..database import get_db
-from ..models.user import User
-from ..config import settings
+from ...database import get_db
+from ...models.user import User
+from ...config import settings
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -57,9 +57,9 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=settings.jwt_access_token_expire_minutes)
+        expire = datetime.utcnow() + timedelta(minutes=settings.security.access_token_expire_minutes)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
+    encoded_jwt = jwt.encode(to_encode, settings.security.secret_key, algorithm=settings.security.algorithm)
     return encoded_jwt
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
@@ -69,7 +69,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
+        payload = jwt.decode(token, settings.security.secret_key, algorithms=[settings.security.algorithm])
         user_id: int = payload.get("sub")
         if user_id is None:
             raise credentials_exception
@@ -112,7 +112,7 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
     db.refresh(db_user)
 
     # Create access token
-    access_token_expires = timedelta(minutes=settings.jwt_access_token_expire_minutes)
+    access_token_expires = timedelta(minutes=settings.security.access_token_expire_minutes)
     access_token = create_access_token(
         data={"sub": str(db_user.id)}, expires_delta=access_token_expires
     )
@@ -120,7 +120,7 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
     return Token(
         access_token=access_token,
         token_type="bearer",
-        expires_in=settings.jwt_access_token_expire_minutes * 60,
+        expires_in=settings.security.access_token_expire_minutes * 60,
         user_id=db_user.id,
         email=db_user.email,
         roles=[role.name for role in db_user.roles]
@@ -139,7 +139,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     if not user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
 
-    access_token_expires = timedelta(minutes=settings.jwt_access_token_expire_minutes)
+    access_token_expires = timedelta(minutes=settings.security.access_token_expire_minutes)
     access_token = create_access_token(
         data={"sub": str(user.id)}, expires_delta=access_token_expires
     )
@@ -147,7 +147,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     return Token(
         access_token=access_token,
         token_type="bearer",
-        expires_in=settings.jwt_access_token_expire_minutes * 60,
+        expires_in=settings.security.access_token_expire_minutes * 60,
         user_id=user.id,
         email=user.email,
         roles=[role.name for role in user.roles]
@@ -155,7 +155,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
 
 @router.post("/refresh", response_model=Token)
 async def refresh_token(current_user: User = Depends(get_current_active_user)):
-    access_token_expires = timedelta(minutes=settings.jwt_access_token_expire_minutes)
+    access_token_expires = timedelta(minutes=settings.security.access_token_expire_minutes)
     access_token = create_access_token(
         data={"sub": str(current_user.id)}, expires_delta=access_token_expires
     )
@@ -163,7 +163,7 @@ async def refresh_token(current_user: User = Depends(get_current_active_user)):
     return Token(
         access_token=access_token,
         token_type="bearer",
-        expires_in=settings.jwt_access_token_expire_minutes * 60,
+        expires_in=settings.security.access_token_expire_minutes * 60,
         user_id=current_user.id,
         email=current_user.email,
         roles=[role.name for role in current_user.roles]
@@ -193,8 +193,8 @@ async def confirm_password_reset(
     try:
         payload = jwt.decode(
             reset_data.token,
-            settings.jwt_secret_key,
-            algorithms=[settings.jwt_algorithm]
+            settings.security.secret_key,
+            algorithms=[settings.security.algorithm]
         )
         user_id = payload.get("sub")
         token_type = payload.get("type")

@@ -4,12 +4,12 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from datetime import datetime
 
-from ..database import get_db
-from ..models.workload import Workload
-from ..models.user import User
-from ..api.routes.auth import get_current_active_user
-from ..optimization.solver import OptimizationSolver
-from ..optimization.models import OptimizationRequest, OptimizationResult
+from ...database import get_db
+from ...models.workload import Workload
+from ...models.user import User
+from .auth import get_current_active_user
+from ...optimization.solver import OptimizationSolver
+from ...optimization.models import OptimizationRequest, OptimizationResult
 
 router = APIRouter(prefix="/workloads", tags=["workloads"])
 
