@@ -10,7 +10,7 @@ setup(
     name="cloudarb",
     version="1.0.0",
     author="CloudArb Team",
-    author_email="team@cloudarb.com",
+    author_email="siddhantkhare2694@gmail.com",
     description="GPU Arbitrage Platform for Cloud Cost Optimization",
     long_description=long_description,
     long_description_content_type="text/markdown",

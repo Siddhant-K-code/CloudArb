@@ -7,4 +7,4 @@ using linear programming and machine learning.
 
 __version__ = "1.0.0"
 __author__ = "CloudArb Team"
-__email__ = "team@cloudarb.com"
+__email__ = "siddhantkhare2694@gmail.com"
