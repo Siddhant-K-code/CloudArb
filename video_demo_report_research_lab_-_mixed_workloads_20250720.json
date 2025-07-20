@@ -1,0 +1,30 @@
+{
+  "customer": "Research Lab - Mixed Workloads",
+  "date": "2025-07-20",
+  "current_situation": {
+    "monthly_spend": 45000,
+    "gpu_requirements": {
+      "gpu_type": "v100",
+      "gpu_count": 8,
+      "hours_per_month": 1440
+    },
+    "performance_requirement": "flexible"
+  },
+  "optimization_results": {
+    "optimized_monthly_cost": 32400.0,
+    "monthly_savings": 12600.0,
+    "annual_savings": 151200.0,
+    "cost_reduction_percentage": 28.0
+  },
+  "roi_analysis": {
+    "implementation_cost": 5000,
+    "payback_months": 0.3968253968253968,
+    "three_year_roi": 8972.0
+  },
+  "recommendations": [
+    "Implement multi-cloud strategy for cost optimization",
+    "Use spot instances for non-critical workloads",
+    "Reserve instances for predictable workloads",
+    "Monitor and adjust based on usage patterns"
+  ]
+}

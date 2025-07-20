@@ -1,0 +1,30 @@
+{
+  "customer": "AI Startup - Model Training",
+  "date": "2025-07-20",
+  "current_situation": {
+    "monthly_spend": 24000,
+    "gpu_requirements": {
+      "gpu_type": "a100",
+      "gpu_count": 4,
+      "hours_per_month": 720
+    },
+    "performance_requirement": "high"
+  },
+  "optimization_results": {
+    "optimized_monthly_cost": 15600.0,
+    "monthly_savings": 8400.0,
+    "annual_savings": 100800.0,
+    "cost_reduction_percentage": 35.0
+  },
+  "roi_analysis": {
+    "implementation_cost": 8000,
+    "payback_months": 0.9523809523809523,
+    "three_year_roi": 3679.9999999999995
+  },
+  "recommendations": [
+    "Implement multi-cloud strategy for cost optimization",
+    "Use spot instances for non-critical workloads",
+    "Reserve instances for predictable workloads",
+    "Monitor and adjust based on usage patterns"
+  ]
+}

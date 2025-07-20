@@ -1,0 +1,30 @@
+{
+  "customer": "Enterprise - Inference Pipeline",
+  "date": "2025-07-20",
+  "current_situation": {
+    "monthly_spend": 120000,
+    "gpu_requirements": {
+      "gpu_type": "t4",
+      "gpu_count": 16,
+      "hours_per_month": 2160
+    },
+    "performance_requirement": "reliable"
+  },
+  "optimization_results": {
+    "optimized_monthly_cost": 84000.0,
+    "monthly_savings": 36000.0,
+    "annual_savings": 432000.0,
+    "cost_reduction_percentage": 30.0
+  },
+  "roi_analysis": {
+    "implementation_cost": 8000,
+    "payback_months": 0.2222222222222222,
+    "three_year_roi": 16100.0
+  },
+  "recommendations": [
+    "Implement multi-cloud strategy for cost optimization",
+    "Use spot instances for non-critical workloads",
+    "Reserve instances for predictable workloads",
+    "Monitor and adjust based on usage patterns"
+  ]
+}
