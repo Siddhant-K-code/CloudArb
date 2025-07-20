@@ -193,8 +193,6 @@ tasks:
     description: Set up database schema and initial data
     triggeredBy:
       - postEnvironmentStart
-    dependsOn:
-      - postgres
     command: |
       # Wait for PostgreSQL to be ready
       until docker exec cloudarb-postgres pg_isready -U cloudarb -d cloudarb; do
