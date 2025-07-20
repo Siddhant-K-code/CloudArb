@@ -4,7 +4,8 @@ Configuration management for CloudArb platform.
 
 import os
 from typing import Dict, List, Optional
-from pydantic import BaseSettings, Field, validator
+from pydantic import Field, validator
+from pydantic_settings import BaseSettings
 
 
 class DatabaseSettings(BaseSettings):
@@ -18,10 +19,15 @@ class DatabaseSettings(BaseSettings):
     pool_size: int = Field(default=20, env="DB_POOL_SIZE")
     max_overflow: int = Field(default=30, env="DB_MAX_OVERFLOW")
 
+    class Config:
+        env_file_encoding = "utf-8"
+        case_sensitive = False
+
     @property
     def url(self) -> str:
         """Get database URL."""
-        return f"postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.name}"
+        # Hardcode for now to fix the connection issue
+        return "postgresql://cloudarb:cloudarb_password@postgres:5432/cloudarb"
 
 
 class RedisSettings(BaseSettings):
@@ -151,9 +157,9 @@ class Settings(BaseSettings):
     monitoring: MonitoringSettings = MonitoringSettings()
 
     class Config:
-        env_file = ".env"
         env_file_encoding = "utf-8"
         case_sensitive = False
+        extra = "ignore"
 
 
 # Global settings instance

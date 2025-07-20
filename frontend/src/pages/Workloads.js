@@ -223,7 +223,7 @@ const Workloads = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-500">Running</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {workloads?.filter(w => w.status === 'running').length || 0}
+                    {Array.isArray(workloads) ? workloads.filter(w => w.status === 'running').length : 0}
                   </p>
                 </div>
               </div>
@@ -237,7 +237,7 @@ const Workloads = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-500">Pending</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {workloads?.filter(w => w.status === 'pending').length || 0}
+                    {Array.isArray(workloads) ? workloads.filter(w => w.status === 'pending').length : 0}
                   </p>
                 </div>
               </div>
@@ -251,7 +251,7 @@ const Workloads = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-500">Total Cost</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    ${workloads?.reduce((sum, w) => sum + (w.total_cost || 0), 0).toFixed(2) || '0.00'}
+                    ${Array.isArray(workloads) ? workloads.reduce((sum, w) => sum + (w.total_cost || 0), 0).toFixed(2) : '0.00'}
                   </p>
                 </div>
               </div>
@@ -288,7 +288,7 @@ const Workloads = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {workloads?.map((workload) => (
+                  {Array.isArray(workloads) ? workloads.map((workload) => (
                     <tr key={workload.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
@@ -352,13 +352,13 @@ const Workloads = () => {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                  )) : null}
                 </tbody>
               </table>
             </div>
           </div>
 
-          {workloads?.length === 0 && (
+          {Array.isArray(workloads) && workloads.length === 0 && (
             <div className="text-center py-12">
               <Cpu className="mx-auto h-12 w-12 text-gray-400" />
               <h3 className="mt-2 text-sm font-medium text-gray-900">No workloads</h3>

@@ -14,7 +14,7 @@ from azure.identity import DefaultAzureCredential
 import json
 
 from ..config import get_settings
-from ..database import get_db
+from ...database import get_db
 from ..models.pricing import Provider, InstanceType, PricingData
 from ..monitoring.metrics import metrics_collector
 

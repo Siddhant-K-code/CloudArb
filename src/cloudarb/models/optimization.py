@@ -114,7 +114,7 @@ class OptimizationResult(Base):
     unit = Column(String(20), nullable=True)  # dollars, percentage, score, etc.
     confidence_interval_lower = Column(Float, nullable=True)
     confidence_interval_upper = Column(Float, nullable=True)
-    metadata = Column(JSONB, nullable=True)  # Additional result details
+    meta_data = Column(JSONB, nullable=True)  # Additional result details
 
     # Foreign keys
     optimization_run_id = Column(Integer, ForeignKey("optimization_runs.id"), nullable=False)

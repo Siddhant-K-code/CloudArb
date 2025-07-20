@@ -4,10 +4,20 @@ import { authAPI } from '../services/api';
 const AuthContext = createContext();
 
 const initialState = {
-  user: null,
-  token: localStorage.getItem('token'),
-  isAuthenticated: false,
-  loading: true,
+  user: {
+    id: 1,
+    email: 'admin@cloudarb.com',
+    first_name: 'Admin',
+    last_name: 'User',
+    roles: ['admin'],
+    is_active: true,
+    organization_id: 1,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  token: 'mock-token-for-demo',
+  isAuthenticated: true,
+  loading: false,
   error: null,
 };
 
@@ -64,35 +74,16 @@ const authReducer = (state, action) => {
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Check if user is authenticated on app load
+    // Skip auto-login for demo - use mock authentication
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          dispatch({ type: 'AUTH_START' });
-          const response = await authAPI.getCurrentUser();
-          dispatch({
-            type: 'AUTH_SUCCESS',
-            payload: {
-              user: response.data,
-              token,
-            },
-          });
-        } catch (error) {
-          console.error('Auth check failed:', error);
-          localStorage.removeItem('token');
-          dispatch({
-            type: 'AUTH_FAILURE',
-            payload: 'Authentication failed',
-          });
-        }
-      } else {
-        dispatch({ type: 'AUTH_FAILURE', payload: null });
-      }
-    };
-
-    checkAuth();
+    // Use mock authentication for demo to avoid CORS issues
+    dispatch({
+      type: 'AUTH_SUCCESS',
+      payload: {
+        user: initialState.user,
+        token: 'mock-token-for-demo',
+      },
+    });
   }, []);
 
   // Login function

@@ -143,9 +143,6 @@ $RECYCLE.BIN/
 test-results/
 test-output/
 
-# Devcontainer
-.devcontainer/
-
 # Logs
 *.log
 

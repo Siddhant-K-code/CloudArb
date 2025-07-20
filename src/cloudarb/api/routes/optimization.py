@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from ...database import get_db
 from ...models import User, OptimizationRun, OptimizationResult, Allocation
-from ...api.dependencies import get_current_user
+from .auth import get_current_user
 from ...optimization.solver import OptimizationSolver, SolverConfig
 from ...optimization.models import (
     OptimizationRequest, OptimizationResponse, OptimizationProblem,

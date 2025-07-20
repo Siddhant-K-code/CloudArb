@@ -25,6 +25,15 @@
 			"version": "lts",
 			"pnpmVersion": "latest",
 			"nvmVersion": "latest"
+		},
+		"ghcr.io/itsmechlark/features/postgresql:1": {
+			"version": "16",
+			"installPgAdmin": true,
+			"installPgAdmin4": true,
+			"installPgAdmin5": true,
+			"installPgAdmin6": true,
+			"installPgAdmin7": true,
+			"installPgAdmin8": true
 		}
 	}
 

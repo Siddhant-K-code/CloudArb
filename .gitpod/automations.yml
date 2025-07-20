@@ -1,0 +1,312 @@
+# Gitpod Automations for CloudArb Development Environment
+# This configuration automatically starts all required services when the environment starts
+
+services:
+  # PostgreSQL Database with TimescaleDB extension
+  postgres:
+    name: PostgreSQL Database
+    description: Main database with TimescaleDB extension for time-series data
+    triggeredBy:
+      - postEnvironmentStart
+    commands:
+      start: |
+        # Start PostgreSQL with TimescaleDB
+        docker run -d \
+          --name cloudarb-postgres \
+          --network host \
+          -e POSTGRES_DB=cloudarb \
+          -e POSTGRES_USER=cloudarb \
+          -e POSTGRES_PASSWORD=cloudarb_password \
+          -e POSTGRES_HOST_AUTH_METHOD=trust \
+          -v postgres_data:/var/lib/postgresql/data \
+          timescale/timescaledb:latest-pg14
+      ready: |
+        # Wait for PostgreSQL to be ready
+        until docker exec cloudarb-postgres pg_isready -U cloudarb -d cloudarb; do
+          echo "Waiting for PostgreSQL..."
+          sleep 2
+        done
+        echo "PostgreSQL is ready!"
+      stop: docker stop cloudarb-postgres && docker rm cloudarb-postgres
+
+  # Redis for caching and sessions
+  redis:
+    name: Redis Cache
+    description: Redis server for caching and session management
+    triggeredBy:
+      - postEnvironmentStart
+    commands:
+      start: |
+        # Start Redis
+        docker run -d \
+          --name cloudarb-redis \
+          --network host \
+          -v redis_data:/data \
+          redis:7-alpine redis-server --appendonly yes
+      ready: |
+        # Wait for Redis to be ready
+        until docker exec cloudarb-redis redis-cli ping; do
+          echo "Waiting for Redis..."
+          sleep 2
+        done
+        echo "Redis is ready!"
+      stop: docker stop cloudarb-redis && docker rm cloudarb-redis
+
+  # CloudArb API Backend
+  api:
+    name: CloudArb API
+    description: FastAPI backend server
+    triggeredBy:
+      - postEnvironmentStart
+    commands:
+      start: |
+        # Set up Python environment
+        python3 -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+
+        # Set environment variables
+        export DB_HOST=localhost
+        export DB_PORT=5432
+        export DB_NAME=cloudarb
+        export DB_USER=cloudarb
+        export DB_PASSWORD=cloudarb_password
+        export REDIS_HOST=localhost
+        export REDIS_PORT=6379
+        export SECRET_KEY=dev-secret-key-change-in-production
+        export ENVIRONMENT=development
+        export DEBUG=true
+        export LOG_LEVEL=INFO
+
+        # Start the API server
+        cd src && python -m uvicorn cloudarb.main:app --host 0.0.0.0 --port 8000 --reload
+      ready: |
+        # Wait for API to be ready
+        until curl -f http://localhost:8000/health; do
+          echo "Waiting for API..."
+          sleep 2
+        done
+        echo "API is ready!"
+      stop: pkill -f "uvicorn cloudarb.main:app"
+
+    # CloudArb Frontend (Development Mode)
+  frontend:
+    name: CloudArb Frontend
+    description: React development server with hot reload
+    triggeredBy:
+      - postEnvironmentStart
+    commands:
+      start: |
+        # Set up Node.js 18
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        nvm install 18 2>/dev/null || true
+        nvm use 18
+
+        # Install frontend dependencies
+        cd frontend
+        npm install
+
+        # Set environment variables for development
+        export REACT_APP_API_URL=http://localhost:8000
+        export REACT_APP_WS_URL=ws://localhost:8000
+
+        # Start React development server
+        npm start
+      ready: |
+        # Wait for frontend to be ready
+        until curl -f http://localhost:3000; do
+          echo "Waiting for Frontend..."
+          sleep 2
+        done
+        echo "Frontend is ready!"
+      stop: pkill -f "react-scripts start"
+
+  # Prometheus for metrics collection
+  prometheus:
+    name: Prometheus Metrics
+    description: Prometheus server for metrics collection
+    triggeredBy:
+      - postEnvironmentStart
+    commands:
+      start: |
+        # Create prometheus config if it doesn't exist
+        mkdir -p monitoring
+        cat > monitoring/prometheus.yml << 'EOF'
+        global:
+          scrape_interval: 15s
+        scrape_configs:
+          - job_name: 'cloudarb-api'
+            static_configs:
+              - targets: ['localhost:8000']
+        EOF
+
+        # Start Prometheus
+        docker run -d \
+          --name cloudarb-prometheus \
+          --network host \
+          -v $(pwd)/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml \
+          -v prometheus_data:/prometheus \
+          prom/prometheus:latest \
+          --config.file=/etc/prometheus/prometheus.yml \
+          --storage.tsdb.path=/prometheus \
+          --web.enable-lifecycle
+      ready: |
+        # Wait for Prometheus to be ready
+        until curl -f http://localhost:9090/-/ready; do
+          echo "Waiting for Prometheus..."
+          sleep 2
+        done
+        echo "Prometheus is ready!"
+      stop: docker stop cloudarb-prometheus && docker rm cloudarb-prometheus
+
+  # Grafana for dashboards
+  grafana:
+    name: Grafana Dashboards
+    description: Grafana server for monitoring dashboards
+    triggeredBy:
+      - postEnvironmentStart
+    commands:
+      start: |
+        # Start Grafana
+        docker run -d \
+          --name cloudarb-grafana \
+          --network host \
+          -e GF_SECURITY_ADMIN_PASSWORD=admin \
+          -e GF_USERS_ALLOW_SIGN_UP=false \
+          -e GF_SERVER_HTTP_PORT=3001 \
+          -v grafana_data:/var/lib/grafana \
+          grafana/grafana:latest
+      ready: |
+        # Wait for Grafana to be ready
+        until curl -f http://localhost:3001/api/health; do
+          echo "Waiting for Grafana..."
+          sleep 2
+        done
+        echo "Grafana is ready!"
+      stop: docker stop cloudarb-grafana && docker rm cloudarb-grafana
+
+tasks:
+  # Initialize database schema
+  init-db:
+    name: Initialize Database
+    description: Set up database schema and initial data
+    triggeredBy:
+      - postEnvironmentStart
+    command: |
+      # Wait for PostgreSQL to be ready
+      until docker exec cloudarb-postgres pg_isready -U cloudarb -d cloudarb; do
+        echo "Waiting for PostgreSQL..."
+        sleep 2
+      done
+
+      # Run database migrations
+      cd src
+      python -c "
+      from cloudarb.database import engine
+      from cloudarb.models import Base
+      Base.metadata.create_all(bind=engine)
+      print('Database schema created successfully!')
+      "
+
+      # Insert initial data if needed
+      python -c "
+      from cloudarb.database import SessionLocal
+      from cloudarb.models.user import User
+      from cloudarb.models.role import Role
+      from cloudarb.services.auth_service import get_password_hash
+
+      db = SessionLocal()
+      try:
+          # Create admin role if it doesn't exist
+          admin_role = db.query(Role).filter(Role.name == 'admin').first()
+          if not admin_role:
+              admin_role = Role(name='admin', description='Administrator')
+              db.add(admin_role)
+              db.commit()
+              print('Admin role created')
+
+          # Create admin user if it doesn't exist
+          admin_user = db.query(User).filter(User.email == 'admin@cloudarb.com').first()
+          if not admin_user:
+              admin_user = User(
+                  email='admin@cloudarb.com',
+                  hashed_password=get_password_hash('admin123'),
+                  full_name='Admin User',
+                  role_id=admin_role.id
+              )
+              db.add(admin_user)
+              db.commit()
+              print('Admin user created')
+      except Exception as e:
+          print(f'Error initializing database: {e}')
+      finally:
+          db.close()
+      "
+
+  # Run tests
+  run-tests:
+    name: Run Tests
+    description: Execute all tests
+    triggeredBy:
+      - manual
+    command: |
+      # Run backend tests
+      cd src
+      python -m pytest tests/ -v
+
+      # Run frontend tests
+      cd ../frontend
+      npm test -- --watchAll=false
+
+  # Lint code
+  lint:
+    name: Lint Code
+    description: Run code linting and formatting
+    triggeredBy:
+      - manual
+    command: |
+      # Backend linting
+      cd src
+      python -m flake8 cloudarb/ --max-line-length=88
+      python -m black cloudarb/ --check
+
+      # Frontend linting
+      cd ../frontend
+      npm run lint
+
+  # Build for production
+  build:
+    name: Build for Production
+    description: Build the application for production deployment
+    triggeredBy:
+      - manual
+    command: |
+      # Build frontend
+      cd frontend
+      npm run build
+
+      # Build backend (if needed)
+      cd ../src
+      python -m py_compile cloudarb/main.py
+      echo "Build completed successfully!"
+
+  # Clean up development environment
+  cleanup:
+    name: Clean Up
+    description: Clean up development environment and containers
+    triggeredBy:
+      - manual
+    command: |
+      # Stop and remove containers
+      docker stop cloudarb-postgres cloudarb-redis cloudarb-prometheus cloudarb-grafana 2>/dev/null || true
+      docker rm cloudarb-postgres cloudarb-redis cloudarb-prometheus cloudarb-grafana 2>/dev/null || true
+
+      # Remove volumes
+      docker volume rm cloudarb_postgres_data cloudarb_redis_data prometheus_data grafana_data 2>/dev/null || true
+
+      # Kill development servers
+      pkill -f "uvicorn cloudarb.main:app" 2>/dev/null || true
+      pkill -f "react-scripts start" 2>/dev/null || true
+
+      echo "Development environment cleaned up!"

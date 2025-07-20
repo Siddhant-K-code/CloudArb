@@ -5,10 +5,10 @@ from sqlalchemy import func, desc
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 
-from ..database import get_db
-from ..models.user import User
-from ..models.pricing import PricingData, Provider, InstanceType
-from ..api.routes.auth import get_current_active_user
+from ...database import get_db
+from ...models.user import User
+from ...models.pricing import PricingData, Provider, InstanceType
+from .auth import get_current_active_user
 
 router = APIRouter(prefix="/market-data", tags=["market-data"])
 

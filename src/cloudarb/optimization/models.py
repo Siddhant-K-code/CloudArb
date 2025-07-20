@@ -73,29 +73,21 @@ class InstanceOption:
     provider_name: str
     instance_name: str
     region: str
-    zone: Optional[str] = None
-
-    # Resource specifications
     cpu_cores: int
     memory_gb: float
     gpu_count: int
     gpu_type: str
     gpu_memory_gb: float
     storage_gb: float
-    network_bandwidth_gbps: Optional[float] = None
-
-    # Pricing information
     on_demand_price_per_hour: float
+    zone: Optional[str] = None
+    network_bandwidth_gbps: Optional[float] = None
     spot_price_per_hour: Optional[float] = None
     reserved_1y_price_per_hour: Optional[float] = None
     reserved_3y_price_per_hour: Optional[float] = None
-
-    # Availability and risk
     spot_availability: Optional[float] = None  # 0-1 scale
     on_demand_availability: Optional[float] = None  # 0-1 scale
     spot_interruption_probability: Optional[float] = None
-
-    # Performance metrics
     performance_score: Optional[float] = None  # 0-100 scale
     latency_ms: Optional[float] = None
 

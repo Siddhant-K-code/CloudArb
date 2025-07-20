@@ -91,7 +91,7 @@ class PricingData(Base):
     # Metadata
     data_source = Column(String(50), nullable=False)  # api, scraping, manual
     confidence_score = Column(Float, nullable=True)  # 0-1 scale for data quality
-    metadata = Column(JSONB, nullable=True)  # Additional provider-specific data
+    meta_data = Column(JSONB, nullable=True)  # Additional provider-specific data
 
     # Foreign keys
     provider_id = Column(Integer, ForeignKey("providers.id"), nullable=False)

@@ -1,10 +1,47 @@
 # CloudArb: GPU Arbitrage Platform
 
+> **Note:** This project is just a POC and is not ready for production. No support is provided for this project.
+
+> **The Story Behind CloudArb**
+>
+> This project started with a simple curiosity about GPU arbitrage. What began as a weekend POC to explore multi-cloud GPU optimization turned into a full-fledged platform that could potentially save AI companies 25-40% on their compute costs.
+>
+> **The Journey:**
+>
+> - Got curious about GPU arbitrage across cloud providers
+> - Tweeted about the idea (https://x.com/Siddhant_K_code/status/1946710137046970401)
+> - Built a proof-of-concept over the weekend
+> - Showed the demo to my mentor
+> - Mentor shared Modal's excellent blog post about resource solving
+> - Realized they had already solved this elegantly
+> - Decided to open source the work anyway as a learning experience
+
+> **Original Tweet:** [@Siddhant_K_code](https://x.com/Siddhant_K_code/status/1946710137046970401) | [Modal's Resource Solver Blog Post](https://modal.com/blog/resource-solver)
+
+---
+
 **CloudArb** is an enterprise-grade GPU arbitrage platform that optimizes cloud compute costs for AI companies through real-time multi-cloud resource allocation and automated deployment. The platform leverages linear programming optimization and machine learning to reduce GPU compute costs by 25-40% while maintaining performance and reliability.
+
+## 🎯 What Problem Does This Solve?
+
+AI companies spend millions on GPU compute, often overpaying by 25-40% due to:
+
+- **Price variations** across cloud providers (AWS, GCP, Azure, Lambda Labs, RunPod)
+- **Spot vs On-Demand** pricing differences
+- **Regional price variations** within the same provider
+- **Lack of real-time optimization** for workload placement
+
+CloudArb solves this by:
+
+- **Real-time price monitoring** across 5+ cloud providers
+- **Linear programming optimization** to find the cheapest combination
+- **Automated deployment** of optimized configurations
+- **Risk management** with quantitative trading principles
 
 ## 🚀 Features
 
 ### Core Optimization Engine
+
 - **Real-time GPU arbitrage** across AWS, GCP, Azure, Lambda Labs, and RunPod
 - **Linear programming optimization** using Google OR-Tools for cost minimization
 - **Multi-objective optimization** balancing cost, performance, and risk
@@ -12,18 +49,21 @@
 - **Risk management** with quantitative trading principles
 
 ### Machine Learning & Forecasting
+
 - **ML-powered demand forecasting** for proactive scaling
 - **Time series analysis** with Prophet and scikit-learn
 - **Performance prediction** based on historical data
 - **Automated model retraining** and A/B testing
 
 ### Infrastructure & Deployment
+
 - **One-click deployment** via Docker Compose
 - **Kubernetes integration** for production workloads
 - **Terraform automation** for infrastructure provisioning
 - **Multi-cloud resource management**
 
 ### Monitoring & Analytics
+
 - **Real-time dashboards** with WebSocket updates
 - **Cost savings analytics** and ROI tracking
 - **Performance benchmarking** across providers
@@ -192,6 +232,7 @@ ENABLE_METRICS=true
 ### Cloud Provider Setup
 
 #### AWS
+
 ```bash
 # Install AWS CLI
 pip install awscli
@@ -201,6 +242,7 @@ aws configure
 ```
 
 #### GCP
+
 ```bash
 # Install Google Cloud SDK
 curl https://sdk.cloud.google.com | bash
@@ -211,6 +253,7 @@ gcloud config set project YOUR_PROJECT_ID
 ```
 
 #### Azure
+
 ```bash
 # Install Azure CLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -363,32 +406,29 @@ locust -f tests/load/locustfile.py --host=http://localhost:8000
 - **Data throughput**: 10,000+ pricing updates per second
 - **Storage**: 100TB+ time-series pricing data
 
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
 ### Development Setup
 
 ```bash
-# Fork and clone the repository
-git clone https://github.com/Siddhant-K-code/cloudarb.git
+# Clone and setup
+git clone https://github.com/siddhant-k-code/cloudarb.git
 cd cloudarb
 
-# Create development branch
-git checkout -b feature/your-feature-name
+# Install dependencies
+pip install -r requirements.txt
+npm install --prefix frontend
 
-# Install development dependencies
-pip install -r requirements-dev.txt
-
-# Run pre-commit hooks
-pre-commit install
-
-# Make your changes and test
+# Run tests
 pytest
+npm test --prefix frontend
 
-# Submit pull request
-git push origin feature/your-feature-name
+# Start development servers
+uvicorn cloudarb.main:app --reload
+npm start --prefix frontend
 ```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
@@ -398,23 +438,3 @@ git push origin feature/your-feature-name
 - [Architecture Guide](docs/ARCHITECTURE.md)
 - [Deployment Guide](docs/DEPLOYMENT.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
-
-## 🔮 Roadmap
-
-### Q3/Q4 2025
-- [ ] Advanced ML forecasting models
-- [ ] Kubernetes operator for automated deployment
-- [ ] Multi-region deployment support
-- [ ] Enhanced risk management features
-- [ ] Real-time arbitrage execution
-- [ ] Advanced cost analytics and reporting
-- [ ] Integration with more cloud providers
-- [ ] Mobile application
-- [ ] AI-powered workload optimization
-- [ ] Advanced portfolio management
-- [ ] Enterprise SSO integration
-- [ ] Custom optimization algorithms
-
----
-
-**Ready to optimize your GPU costs?** [Get started now](http://localhost:3000) or [contact us](mailto:hello@cloudarb.com) for a demo.
