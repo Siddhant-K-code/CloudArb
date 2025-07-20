@@ -74,9 +74,16 @@ const authReducer = (state, action) => {
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // Skip authentication check for demo - always authenticated
+    // Skip auto-login for demo - use mock authentication
   useEffect(() => {
-    // No authentication check needed for demo
+    // Use mock authentication for demo to avoid CORS issues
+    dispatch({
+      type: 'AUTH_SUCCESS',
+      payload: {
+        user: initialState.user,
+        token: 'mock-token-for-demo',
+      },
+    });
   }, []);
 
   // Login function

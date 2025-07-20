@@ -59,14 +59,14 @@ const Dashboard = () => {
   const totalCost = costAnalysis?.total_cost || 0;
   const totalSavings = savingsSummary?.total_savings || 0;
   const savingsPercentage = savingsSummary?.savings_percentage || 0;
-  const activeWorkloads = workloads?.filter(w => w.status === 'running').length || 0;
-  const pendingWorkloads = workloads?.filter(w => w.status === 'pending').length || 0;
+  const activeWorkloads = Array.isArray(workloads) ? workloads.filter(w => w.status === 'running').length : 0;
+  const pendingWorkloads = Array.isArray(workloads) ? workloads.filter(w => w.status === 'pending').length : 0;
 
   // Cost trend data for chart
-  const costTrendData = costAnalysis?.cost_trend?.map(item => ({
+  const costTrendData = Array.isArray(costAnalysis?.cost_trend) ? costAnalysis.cost_trend.map(item => ({
     date: new Date(item.date).toLocaleDateString(),
     cost: item.cost,
-  })) || [];
+  })) : [];
 
   // Cost breakdown data for pie chart
   const costBreakdownData = costAnalysis?.cost_breakdown ?

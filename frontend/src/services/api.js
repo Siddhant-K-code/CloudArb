@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create axios instance
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || '/api',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export const authAPI = {
 // Workloads API
 export const workloadsAPI = {
   getWorkloads: (params = {}) =>
-    api.get('/workloads', { params }),
+    api.get('/dev/workloads', { params }),
 
   getWorkload: (id) =>
     api.get(`/workloads/${id}`),
@@ -116,7 +116,7 @@ export const optimizationAPI = {
     api.get(`/optimize/${id}`),
 
   getOptimizations: (params = {}) =>
-    api.get('/optimize', { params }),
+    api.get('/dev/optimize', { params }),
 
   deleteOptimization: (id) =>
     api.delete(`/optimize/${id}`),
@@ -134,7 +134,7 @@ export const optimizationAPI = {
 // Analytics API
 export const analyticsAPI = {
   getCostAnalysis: (params = {}) =>
-    api.get('/analytics/cost-analysis', { params }),
+    api.get('/dev/analytics/cost-analysis', { params }),
 
   getPerformanceMetrics: (params = {}) =>
     api.get('/analytics/performance-metrics', { params }),
@@ -143,13 +143,13 @@ export const analyticsAPI = {
     api.get('/analytics/arbitrage-opportunities', { params }),
 
   getMarketAnalysis: (params = {}) =>
-    api.get('/analytics/market-analysis', { params }),
+    api.get('/dev/analytics/market-analysis', { params }),
 
   getOptimizationHistory: (params = {}) =>
     api.get('/analytics/optimization-history', { params }),
 
   getSavingsSummary: (params = {}) =>
-    api.get('/analytics/savings-summary', { params }),
+    api.get('/dev/analytics/savings-summary', { params }),
 };
 
 // Market Data API
