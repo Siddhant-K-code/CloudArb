@@ -435,6 +435,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ### Documentation
 
 - [API Documentation](http://localhost:8000/docs) (when running)
+- [GPU Scheduler Core Logic](docs/GPU_SCHEDULER_CORE_LOGIC.md) - Complete overview of the GPU scheduling algorithm
+- [GPU Scheduler Implementation](docs/GPU_SCHEDULER_IMPLEMENTATION.md) - Technical implementation details
+- [GPU Scheduler Quick Reference](docs/GPU_SCHEDULER_QUICK_REFERENCE.md) - Key formulas and algorithms
 - [Architecture Guide](docs/ARCHITECTURE.md)
 - [Deployment Guide](docs/DEPLOYMENT.md)
 - [Troubleshooting](docs/TROUBLESHOOTING.md)
