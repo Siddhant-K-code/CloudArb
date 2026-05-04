@@ -19,7 +19,7 @@
 			"version": "3.12"
 		},
 		"ghcr.io/jsburckhardt/devcontainer-features/uv:1": {},
-		"ghcr.io/devcontainers/features/node:1": {
+		"ghcr.io/devcontainers/features/node:2": {
 			"nodeGypDependencies": true,
 			"installYarnUsingApt": true,
 			"version": "lts",
